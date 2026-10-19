@@ -1,0 +1,13 @@
+digraph G {
+  label="Diagrama de Colaboração – Login (Atividade 01)"; labelloc=t; fontname="Helvetica-Bold"; fontsize=18;
+  rankdir=LR; nodesep=1.2; ranksep=2.2; bgcolor=white; pad=0.4;
+  node [shape=box, style="filled", fillcolor="#fdf2f2", color="#56070c", penwidth=1.6, fontname="Helvetica", fontsize=14, margin="0.25,0.15"];
+  edge [fontname="Helvetica", fontsize=12, color="#56070c", arrowsize=0.9];
+  usuario [shape=box, label=<<U>usuario:Cliente</U>>];
+  sistema [label=<<U>sistema:Sistema</U>>];
+  bd      [label=<<U>bd:BancoDados</U>>];
+  usuario -> sistema [label="1: login()"];
+  sistema -> bd      [label="2: validarSenha()", tailport=n, headport=n];
+  bd -> sistema      [label="3: resultado()", tailport=s, headport=s];
+  sistema -> usuario [label="4: acessoPermitido()   [dados corretos]", tailport=s, headport=s];
+}

@@ -1,0 +1,25 @@
+sequenceDiagram
+    autonumber
+    actor Cliente
+    participant UI as Interface
+    participant Carrinho
+    participant Estoque
+    participant Pagamento as Pagamento (gateway)
+    participant Pedido
+
+    Cliente->>UI: finalizarCompra()
+    UI->>UI: verificarCadastro() [RN1]
+    UI->>Carrinho: obterItens()
+    Carrinho-->>UI: itens e total
+    UI->>Estoque: verificarEstoque(itens) [RN2]
+    Estoque-->>UI: estoque suficiente
+    UI->>Pagamento: processarPagamento(total)
+    Pagamento-->>UI: retorno do gateway
+    alt pagamento aprovado [RN3]
+        UI->>Pedido: confirmarPedido()
+        Pedido->>Estoque: baixarEstoque()
+        Pedido-->>UI: pedido confirmado
+    else pagamento recusado
+        UI-->>Cliente: solicitarOutraForma()
+    end
+    UI-->>Cliente: notificarCliente()

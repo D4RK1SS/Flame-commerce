@@ -1,0 +1,17 @@
+digraph G {
+  label="Diagrama de Colaboração – Compra online (Atividade 03)"; labelloc=t; fontname="Helvetica-Bold"; fontsize=18;
+  rankdir=LR; nodesep=1.0; ranksep=2.4; bgcolor=white; pad=0.4;
+  node [shape=box, style="filled", fillcolor="#fdf2f2", color="#56070c", penwidth=1.6, fontname="Helvetica", fontsize=14, margin="0.25,0.15"];
+  edge [fontname="Helvetica", fontsize=12, color="#56070c", arrowsize=0.9];
+  cliente  [label=<<U>cliente:Cliente</U>>];
+  loja     [label=<<U>loja:Sistema</U>>];
+  carrinho [label=<<U>carrinho:Carrinho</U>>];
+  estoque  [label=<<U>estoque:Estoque</U>>];
+  pag      [label=<<U>pag:Pagamento</U>>];
+  cliente -> loja  [label="1: buscarProduto()"];
+  loja -> carrinho [label="2: adicionarItem()"];
+  loja -> estoque  [label="3: verificarEstoque()\n[estoque > 0]"];
+  cliente -> loja  [label="4: finalizarCompra()", tailport=s, headport=s];
+  loja -> pag      [label="5: processarPagamento()"];
+  loja -> loja     [label="6: [aprovado] confirmarPedido()"];
+}
