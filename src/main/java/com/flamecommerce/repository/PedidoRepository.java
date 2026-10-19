@@ -13,13 +13,13 @@ import java.util.Optional;
 
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
-    @EntityGraph(attributePaths = {"itens", "pagamento", "entrega"})
+    @EntityGraph(attributePaths = {"usuario", "itens", "pagamento", "entrega"}, type = EntityGraph.EntityGraphType.LOAD)
     List<Pedido> findByUsuarioEmailOrderByCriadoEmDesc(String email);
 
-    @EntityGraph(attributePaths = {"itens", "pagamento", "entrega"})
+    @EntityGraph(attributePaths = {"usuario", "itens", "pagamento", "entrega"}, type = EntityGraph.EntityGraphType.LOAD)
     List<Pedido> findAllByOrderByCriadoEmDesc();
 
-    @EntityGraph(attributePaths = {"itens", "pagamento", "entrega"})
+    @EntityGraph(attributePaths = {"usuario", "itens", "pagamento", "entrega"}, type = EntityGraph.EntityGraphType.LOAD)
     @Query("select p from Pedido p where p.id = :id")
     Optional<Pedido> buscarDetalhado(@Param("id") Long id);
 

@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface CarrinhoRepository extends JpaRepository<Carrinho, Long> {
 
-    @EntityGraph(attributePaths = {"itens", "itens.produto"})
+    @EntityGraph(attributePaths = {"itens", "itens.produto", "itens.produto.estoque"}, type = EntityGraph.EntityGraphType.LOAD)
     Optional<Carrinho> findByUsuarioEmail(String email);
 
     /** Soma das unidades no carrinho (null quando vazio). */
