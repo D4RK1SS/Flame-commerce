@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Finalizar compra')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('carrinho')}"></header>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<main class="page container">
+    <h1>Finalizar compra</h1>
+
+    <form class="layout-2" th:action="@{/checkout}" th:object="${form}" method="post" novalidate>
+        <div>
+            <!-- Endereço de entrega -->
+            <section class="card panel">
+                <h3>1. Endereço de entrega</h3>
+                <div class="form">
+                    <div class="row">
+                        <div class="field" th:classappend="${#fields.hasErrors('cep')} ? 'has-error'">
+                            <label for="cep">CEP</label>
+                            <input id="cep" type="text" th:field="*{cep}" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000">
+                            <small class="field-error" th:if="${#fields.hasErrors('cep')}" th:errors="*{cep}">erro</small>
+                        </div>
+                        <div class="field" th:classappend="${#fields.hasErrors('estado')} ? 'has-error'">
+                            <label for="estado">Estado (UF)</label>
+                            <input id="estado" type="text" th:field="*{estado}" autocomplete="address-level1" placeholder="SP">
+                            <small class="field-error" th:if="${#fields.hasErrors('estado')}" th:errors="*{estado}">erro</small>
+                        </div>
+                    </div>
+                    <div class="field" th:classappend="${#fields.hasErrors('logradouro')} ? 'has-error'">
+                        <label for="logradouro">Rua / Avenida</label>
+                        <input id="logradouro" type="text" th:field="*{logradouro}" autocomplete="address-line1">
+                        <small class="field-error" th:if="${#fields.hasErrors('logradouro')}" th:errors="*{logradouro}">erro</small>
+                    </div>
+                    <div class="row">
+                        <div class="field" th:classappend="${#fields.hasErrors('numero')} ? 'has-error'">
+                            <label for="numero">Número</label>
+                            <input id="numero" type="text" th:field="*{numero}">
+                            <small class="field-error" th:if="${#fields.hasErrors('numero')}" th:errors="*{numero}">erro</small>
+                        </div>
+                        <div class="field">
+                            <label for="complemento">Complemento (opcional)</label>
+                            <input id="complemento" type="text" th:field="*{complemento}" autocomplete="address-line2">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="field" th:classappend="${#fields.hasErrors('bairro')} ? 'has-error'">
+                            <label for="bairro">Bairro</label>
+                            <input id="bairro" type="text" th:field="*{bairro}">
+                            <small class="field-error" th:if="${#fields.hasErrors('bairro')}" th:errors="*{bairro}">erro</small>
+                        </div>
+                        <div class="field" th:classappend="${#fields.hasErrors('cidade')} ? 'has-error'">
+                            <label for="cidade">Cidade</label>
+                            <input id="cidade" type="text" th:field="*{cidade}" autocomplete="address-level2">
+                            <small class="field-error" th:if="${#fields.hasErrors('cidade')}" th:errors="*{cidade}">erro</small>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Pagamento -->
+            <section class="card panel">
+                <h3>2. Forma de pagamento</h3>
+                <div class="pay-options" role="radiogroup" aria-label="Forma de pagamento">
+                    <label class="pay-option" th:each="m : ${metodos}">
+                        <input type="radio" name="metodo" th:value="${m}" th:checked="${form.metodo == m}">
+                        <span>
+                            <i th:text="${m.name() == 'PIX' ? '⚡' : (m.name() == 'CARTAO' ? '💳' : '🧾')}">💳</i>
+                            <b th:text="${m.rotulo}">Método</b>
+                        </span>
+                    </label>
+                </div>
+
+                <div class="form card-fields" id="card-fields" hidden style="margin-top:1rem">
+                    <div class="field">
+                        <label for="numeroCartao">Número do cartão</label>
+                        <input id="numeroCartao" name="numeroCartao" type="text" inputmode="numeric" autocomplete="cc-number" placeholder="0000 0000 0000 0000">
+                    </div>
+                    <div class="field">
+                        <label for="nomeCartao">Nome impresso no cartão</label>
+                        <input id="nomeCartao" name="nomeCartao" type="text" autocomplete="cc-name" th:value="*{nomeCartao}">
+                    </div>
+                    <div class="row">
+                        <div class="field">
+                            <label for="validade">Validade (MM/AA)</label>
+                            <input id="validade" name="validade" type="text" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/AA" th:value="*{validade}">
+                        </div>
+                        <div class="field">
+                            <label for="cvv">CVV</label>
+                            <input id="cvv" name="cvv" type="password" inputmode="numeric" autocomplete="cc-csc" placeholder="000">
+                        </div>
+                    </div>
+                    <p class="hint">Simulação para a atividade: cartões terminados em <strong>0000</strong> são recusados.</p>
+                </div>
+                <small class="field-error" th:if="${#fields.hasErrors('metodo')}" th:errors="*{metodo}">erro</small>
+            </section>
+        </div>
+
+        <aside class="card summary">
+            <h3>Resumo</h3>
+            <div class="mini-item" th:each="item : ${carrinho.itens}">
+                <span th:text="${item.quantidade} + '× ' + ${item.produto.nome}">1× Produto</span>
+                <span th:text="${#numbers.formatCurrency(item.subtotal)}">R$ 0,00</span>
+            </div>
+            <div class="line"><span class="muted">Frete</span><span class="stock-ok">Grátis</span></div>
+            <div class="line total"><span>Total</span><span th:text="${#numbers.formatCurrency(carrinho.total)}">R$ 0,00</span></div>
+            <button class="btn btn-primary btn-block" type="submit">Confirmar e pagar</button>
+            <a class="btn btn-ghost btn-block" th:href="@{/carrinho}">Voltar ao carrinho</a>
+            <p class="hint">O pedido só é confirmado após a aprovação do pagamento.</p>
+        </aside>
+    </form>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Entrar')}"></head>
+<body class="auth-body">
+<a class="btn btn-ghost back-home" th:href="@{/}">← Voltar à loja</a>
+
+<main class="auth">
+    <section class="auth-hero">
+        <div class="brand"><img th:src="@{/img/flame.svg}" alt=""><span>Flame <em>Commerce</em></span></div>
+        <h2>Compre fácil, receba rápido.</h2>
+        <ul>
+            <li>Catálogo simples e rápido de navegar</li>
+            <li>Pagamento por Pix, cartão ou boleto</li>
+            <li>Acompanhe e cancele seus pedidos</li>
+        </ul>
+    </section>
+
+    <section class="auth-panel">
+        <div class="auth-card">
+            <h1>Entrar</h1>
+            <p class="muted">Acesse sua conta para finalizar compras.</p>
+
+            <div class="alert alert-error inline" role="alert" th:if="${param.erro}">
+                <span>E-mail ou senha incorretos. Tente novamente.</span>
+            </div>
+            <div class="alert alert-success inline" role="status" th:if="${param.saiu}">
+                <span>Você saiu da sua conta.</span>
+            </div>
+            <div class="alert alert-success inline" role="status" th:if="${param.cadastrado}">
+                <span>Cadastro realizado! Entre com seu e-mail e senha.</span>
+            </div>
+
+            <form class="form" th:action="@{/login}" method="post">
+                <label class="field">
+                    <span>E-mail</span>
+                    <input type="email" name="email" placeholder="voce@email.com" autocomplete="username" required autofocus>
+                </label>
+                <label class="field">
+                    <span>Senha</span>
+                    <div class="input-group">
+                        <input id="senha" type="password" name="senha" autocomplete="current-password" required>
+                        <button class="toggle-pass" type="button" data-target="senha">Mostrar</button>
+                    </div>
+                </label>
+                <button class="btn btn-primary btn-block" type="submit">Entrar</button>
+            </form>
+
+            <p class="auth-switch">Não tem uma conta? <a th:href="@{/cadastro}">Criar conta</a></p>
+            <p class="demo-hint">
+                Contas de demonstração:<br>
+                admin: <code>admin@flame.com</code> / <code>admin123</code><br>
+                cliente: <code>cliente@flame.com</code> / <code>cliente123</code>
+            </p>
+        </div>
+    </section>
+</main>
+</body>
+</html>

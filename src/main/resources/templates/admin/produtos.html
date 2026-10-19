@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Produtos')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('admin')}"></header>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<main class="page container">
+    <div class="admin">
+        <nav th:replace="~{fragments/layout :: adminNav('produtos')}"></nav>
+
+        <section>
+            <div class="toolbar">
+                <h1>Produtos e estoque</h1>
+                <a class="btn btn-primary" th:href="@{/admin/produtos/novo}">+ Novo produto</a>
+            </div>
+
+            <div class="card table-wrap">
+                <table>
+                    <thead>
+                    <tr><th>Produto</th><th>Categoria</th><th>Preço</th><th>Estoque</th><th>Status</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="p : ${produtos}">
+                        <td>
+                            <div class="prod-cell">
+                                <div th:replace="~{fragments/layout :: media(${p}, 'sm')}"></div>
+                                <strong th:text="${p.nome}">Produto</strong>
+                            </div>
+                        </td>
+                        <td th:text="${p.categoria}">Categoria</td>
+                        <td th:text="${#numbers.formatCurrency(p.preco)}">R$ 0,00</td>
+                        <td>
+                            <span class="status" th:classappend="${p.quantidadeEstoque == 0} ? 'status-CANCELADO' : (${p.quantidadeEstoque <= 3} ? 'status-CONFIRMADO' : 'status-ENTREGUE')"
+                                  th:text="${p.quantidadeEstoque} + ' un.'">0 un.</span>
+                        </td>
+                        <td>
+                            <span class="status" th:classappend="${p.ativo} ? 'status-on' : 'status-off'"
+                                  th:text="${p.ativo} ? 'Ativo' : 'Inativo'">Ativo</span>
+                        </td>
+                        <td class="actions">
+                            <a class="btn btn-outline btn-sm" th:href="@{/admin/produtos/{id}/editar(id=${p.id})}">Editar</a>
+                            <form th:action="@{/admin/produtos/{id}/ativo(id=${p.id})}" method="post">
+                                <button class="btn btn-ghost btn-sm" type="submit" th:text="${p.ativo} ? 'Desativar' : 'Ativar'">Desativar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(produtos)}">
+                        <td colspan="6" class="muted" style="text-align:center">Nenhum produto cadastrado.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Loja')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('loja')}"></header>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<main class="page container">
+
+    <section class="hero" th:if="${#strings.isEmpty(busca) and #strings.isEmpty(categoriaAtiva)}">
+        <img class="flame-bg" th:src="@{/img/flame.svg}" alt="">
+        <h1>Acenda sua próxima compra.</h1>
+        <p>Compre fácil, receba rápido. Escolha seus produtos, pague com Pix, cartão ou boleto e acompanhe o pedido até a porta de casa.</p>
+        <a class="btn btn-primary" href="#catalogo">Ver produtos</a>
+    </section>
+
+    <section id="catalogo">
+        <div class="chips" role="list" aria-label="Categorias">
+            <a class="chip" role="listitem" th:href="@{/(q=${busca})}"
+               th:classappend="${#strings.isEmpty(categoriaAtiva)} ? 'active'">Todos</a>
+            <a class="chip" role="listitem" th:each="c : ${categorias}"
+               th:href="@{/(q=${busca}, categoria=${c})}"
+               th:classappend="${c == categoriaAtiva} ? 'active'" th:text="${c}">Categoria</a>
+        </div>
+
+        <div class="section-title">
+            <h2 th:text="${#strings.isEmpty(busca)} ? 'Produtos' : 'Resultados para “' + ${busca} + '”'">Produtos</h2>
+            <span class="muted" th:text="${#lists.size(produtos)} + ' item(ns)'">0 itens</span>
+        </div>
+
+        <div class="card empty" th:if="${#lists.isEmpty(produtos)}">
+            <div class="big">🔍</div>
+            <p>Nenhum produto encontrado.</p>
+            <a class="btn btn-outline" th:href="@{/}">Limpar filtros</a>
+        </div>
+
+        <div class="grid" th:unless="${#lists.isEmpty(produtos)}">
+            <article class="card product-card" th:each="p : ${produtos}">
+                <a class="cover" th:href="@{/produtos/{id}(id=${p.id})}">
+                    <div th:replace="~{fragments/layout :: media(${p}, '')}"></div>
+                </a>
+                <div class="body">
+                    <span class="cat" th:text="${p.categoria}">Categoria</span>
+                    <h3><a class="cover" th:href="@{/produtos/{id}(id=${p.id})}" th:text="${p.nome}">Produto</a></h3>
+                    <div class="price" th:text="${#numbers.formatCurrency(p.preco)}">R$ 0,00</div>
+
+                    <div class="buy">
+                        <form sec:authorize="isAuthenticated()" th:action="@{/carrinho/adicionar}" method="post">
+                            <input type="hidden" name="produtoId" th:value="${p.id}">
+                            <input type="hidden" name="quantidade" value="1">
+                            <button class="btn btn-primary btn-block" type="submit" th:disabled="${!p.disponivel}"
+                                    th:text="${p.disponivel} ? 'Adicionar ao carrinho' : 'Indisponível'">Adicionar ao carrinho</button>
+                        </form>
+                        <a sec:authorize="isAnonymous()" class="btn btn-outline btn-block" th:href="@{/login}">Entrar para comprar</a>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

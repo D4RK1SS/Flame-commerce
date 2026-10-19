@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Carrinho')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('carrinho')}"></header>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<main class="page container">
+    <h1>Seu carrinho</h1>
+
+    <div class="card empty" th:if="${carrinho.vazio}">
+        <div class="big">🛒</div>
+        <p>Seu carrinho está vazio.</p>
+        <a class="btn btn-primary" th:href="@{/}">Explorar produtos</a>
+    </div>
+
+    <div class="layout-2" th:unless="${carrinho.vazio}">
+        <section class="card">
+            <div class="cart-item" th:each="item : ${carrinho.itens}">
+                <a th:href="@{/produtos/{id}(id=${item.produto.id})}">
+                    <div th:replace="~{fragments/layout :: media(${item.produto}, 'sm')}"></div>
+                </a>
+
+                <div>
+                    <a class="name" th:href="@{/produtos/{id}(id=${item.produto.id})}" th:text="${item.produto.nome}">Produto</a>
+                    <div class="muted" th:text="${#numbers.formatCurrency(item.produto.preco)} + ' cada'">R$ 0,00 cada</div>
+
+                    <div class="controls">
+                        <form class="controls" th:action="@{/carrinho/item/{id}/alterar(id=${item.id})}" method="post">
+                            <div class="qty">
+                                <button type="button" data-step="-1" aria-label="Diminuir">−</button>
+                                <input type="number" name="quantidade" th:value="${item.quantidade}" min="1"
+                                       th:max="${item.produto.quantidadeEstoque}" aria-label="Quantidade">
+                                <button type="button" data-step="1" aria-label="Aumentar">+</button>
+                            </div>
+                            <button class="btn btn-outline btn-sm" type="submit">Atualizar</button>
+                        </form>
+                        <form th:action="@{/carrinho/item/{id}/remover(id=${item.id})}" method="post">
+                            <button class="btn btn-ghost btn-sm" type="submit">Remover</button>
+                        </form>
+                    </div>
+
+                    <div class="hint stock-low" th:if="${item.quantidade > item.produto.quantidadeEstoque}"
+                         th:text="'Estoque atual: ' + ${item.produto.quantidadeEstoque} + ' unidade(s). Ajuste a quantidade.'">Estoque</div>
+                </div>
+
+                <div class="sub" th:text="${#numbers.formatCurrency(item.subtotal)}">R$ 0,00</div>
+            </div>
+        </section>
+
+        <aside class="card summary">
+            <h3>Resumo do pedido</h3>
+            <div class="line"><span class="muted">Itens</span><span th:text="${carrinho.quantidadeTotal}">0</span></div>
+            <div class="line"><span class="muted">Frete</span><span class="stock-ok">Grátis</span></div>
+            <div class="line total"><span>Total</span><span th:text="${#numbers.formatCurrency(carrinho.total)}">R$ 0,00</span></div>
+            <a class="btn btn-primary btn-block" th:href="@{/checkout}">Finalizar compra</a>
+            <a class="btn btn-ghost btn-block" th:href="@{/}">Continuar comprando</a>
+        </aside>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

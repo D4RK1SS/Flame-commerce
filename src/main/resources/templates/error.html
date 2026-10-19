@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Ops')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('')}"></header>
+
+<main class="page container">
+    <div class="error-page">
+        <div class="code" th:text="${status != null} ? ${status} : 'Ops'">404</div>
+        <h1 th:text="${status == 404} ? 'Página não encontrada' : (${status == 403} ? 'Acesso negado' : 'Algo deu errado')">Algo deu errado</h1>
+        <p class="muted">Não conseguimos concluir essa ação. Volte para a loja e tente novamente.</p>
+        <a class="btn btn-primary" th:href="@{/}">Voltar à loja</a>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Painel')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('admin')}"></header>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<main class="page container">
+    <div class="admin">
+        <nav th:replace="~{fragments/layout :: adminNav('painel')}"></nav>
+
+        <section>
+            <h1>Painel</h1>
+
+            <div class="kpis">
+                <div class="card kpi">
+                    <div class="label">Receita (sem cancelados)</div>
+                    <div class="value" th:text="${#numbers.formatCurrency(receita)}">R$ 0,00</div>
+                </div>
+                <div class="card kpi">
+                    <div class="label">Pedidos</div>
+                    <div class="value" th:text="${totalPedidos}">0</div>
+                </div>
+                <div class="card kpi">
+                    <div class="label">Aguardando envio</div>
+                    <div class="value" th:text="${pedidosAbertos}">0</div>
+                </div>
+                <div class="card kpi">
+                    <div class="label">Produtos ativos</div>
+                    <div class="value" th:text="${produtosAtivos}">0</div>
+                </div>
+                <div class="card kpi" th:classappend="${semEstoque > 0} ? 'alert-kpi'">
+                    <div class="label">Sem estoque</div>
+                    <div class="value" th:text="${semEstoque}">0</div>
+                </div>
+            </div>
+
+            <div class="toolbar">
+                <h2>Pedidos recentes</h2>
+                <a class="btn btn-outline btn-sm" th:href="@{/admin/pedidos}">Ver todos</a>
+            </div>
+
+            <div class="card table-wrap">
+                <table>
+                    <thead>
+                    <tr><th>Pedido</th><th>Cliente</th><th>Data</th><th>Total</th><th>Status</th></tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="p : ${recentes}">
+                        <td th:text="'#' + ${p.id}">#1</td>
+                        <td th:text="${p.usuario.nome}">Cliente</td>
+                        <td th:text="${#temporals.format(p.criadoEm, 'dd/MM/yyyy HH:mm')}">01/01/2026</td>
+                        <td th:text="${#numbers.formatCurrency(p.total)}">R$ 0,00</td>
+                        <td><span class="status" th:classappend="'status-' + ${p.status.name()}" th:text="${p.status.rotulo}">Status</span></td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(recentes)}">
+                        <td colspan="5" class="muted" style="text-align:center">Nenhum pedido ainda.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

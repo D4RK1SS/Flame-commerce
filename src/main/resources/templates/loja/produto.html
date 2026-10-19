@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head(${produto.nome})}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('loja')}"></header>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<main class="page container">
+    <nav class="breadcrumb" aria-label="Você está em">
+        <a th:href="@{/}">Loja</a> ›
+        <a th:href="@{/(categoria=${produto.categoria})}" th:text="${produto.categoria}">Categoria</a> ›
+        <span th:text="${produto.nome}">Produto</span>
+    </nav>
+
+    <div class="product-page">
+        <div class="card">
+            <div th:replace="~{fragments/layout :: media(${produto}, 'xl')}"></div>
+        </div>
+
+        <div class="info">
+            <div>
+                <span class="cat" th:text="${produto.categoria}">Categoria</span>
+                <h1 th:text="${produto.nome}">Produto</h1>
+            </div>
+
+            <div class="price" th:text="${#numbers.formatCurrency(produto.preco)}">R$ 0,00</div>
+
+            <p class="stock-line">
+                <span class="stock-out" th:if="${!produto.disponivel}">● Indisponível no momento</span>
+                <span class="stock-low" th:if="${produto.disponivel and produto.quantidadeEstoque <= 3}"
+                      th:text="'● Últimas ' + ${produto.quantidadeEstoque} + ' unidade(s)'">● Últimas unidades</span>
+                <span class="stock-ok" th:if="${produto.disponivel and produto.quantidadeEstoque > 3}">● Em estoque</span>
+            </p>
+
+            <p class="muted" th:text="${produto.descricao}">Descrição</p>
+
+            <form sec:authorize="isAuthenticated()" class="buy-row" th:action="@{/carrinho/adicionar}" method="post">
+                <input type="hidden" name="produtoId" th:value="${produto.id}">
+                <div class="qty">
+                    <button type="button" data-step="-1" aria-label="Diminuir">−</button>
+                    <input type="number" name="quantidade" value="1" min="1" th:max="${produto.quantidadeEstoque}" aria-label="Quantidade">
+                    <button type="button" data-step="1" aria-label="Aumentar">+</button>
+                </div>
+                <button class="btn btn-primary" type="submit" th:disabled="${!produto.disponivel}">Adicionar ao carrinho</button>
+            </form>
+
+            <div sec:authorize="isAnonymous()" class="buy-row">
+                <a class="btn btn-primary" th:href="@{/login}">Entrar para comprar</a>
+                <span class="hint">Ainda não tem conta? <a th:href="@{/cadastro}">Cadastre-se</a></span>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

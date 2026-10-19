@@ -1,0 +1,33 @@
+/*
+ * Flame Commerce — tokens do tema.
+ * Paleta extraída do front "Alexandria" (loginPage.css). Para trocar o visual
+ * do site inteiro basta mexer nos valores deste arquivo.
+ */
+:root {
+    /* Alexandria (valores originais) */
+    --bg-from: #000000;          /* body: gradiente preto → vinho */
+    --bg-to: #56070c;
+    --surface: #1c1e1f;          /* card de login */
+    --input-bg: #f2f5f6;         /* inputs */
+    --primary: #56070c;          /* botão: gradiente vinho */
+    --primary-2: #5f1013;
+    --text: #ffffff;
+    --success: #72f436;
+    --danger: #f44336;
+
+    /* Derivados (variações das cores acima para hierarquia e contraste) */
+    --surface-2: #26292b;
+    --border: #34383b;
+    --muted: #a9b0b5;
+    --accent: #e0434a;           /* destaques, preços, links */
+    --accent-soft: rgba(224, 67, 74, .14);
+    --ring: rgba(224, 67, 74, .45);
+    --on-input: #1c1e1f;         /* texto dentro de inputs claros */
+
+    --radius: 14px;
+    --radius-sm: 8px;
+    --shadow: 0 10px 30px rgba(0, 0, 0, .45);
+
+    --font-display: "Sedan SC", Georgia, serif;   /* fonte do Alexandria: marca e títulos */
+    --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}

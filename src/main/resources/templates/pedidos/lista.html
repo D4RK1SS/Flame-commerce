@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Meus pedidos')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('pedidos')}"></header>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<main class="page container">
+    <h1>Meus pedidos</h1>
+
+    <div class="card empty" th:if="${#lists.isEmpty(pedidos)}">
+        <div class="big">📦</div>
+        <p>Você ainda não fez nenhum pedido.</p>
+        <a class="btn btn-primary" th:href="@{/}">Ir às compras</a>
+    </div>
+
+    <article class="card order" th:each="p : ${pedidos}">
+        <header class="order-head">
+            <div>
+                <h3 th:text="'Pedido #' + ${p.id}">Pedido #1</h3>
+                <span class="muted" th:text="${#temporals.format(p.criadoEm, 'dd/MM/yyyy HH:mm')}">01/01/2026 10:00</span>
+            </div>
+            <span class="status" th:classappend="'status-' + ${p.status.name()}" th:text="${p.status.rotulo}">Confirmado</span>
+        </header>
+
+        <div class="order-body">
+            <div class="timeline" th:if="${p.status.name() != 'CANCELADO'}" aria-label="Andamento do pedido">
+                <div class="step done">Confirmado</div>
+                <div class="step" th:classappend="${p.status.name() == 'ENVIADO' or p.status.name() == 'ENTREGUE'} ? 'done'">Enviado</div>
+                <div class="step" th:classappend="${p.status.name() == 'ENTREGUE'} ? 'done'">Entregue</div>
+            </div>
+
+            <div class="order-items">
+                <div class="li" th:each="i : ${p.itens}">
+                    <span th:text="${i.quantidade} + '× ' + ${i.nomeProduto}">1× Produto</span>
+                    <span th:text="${#numbers.formatCurrency(i.subtotal)}">R$ 0,00</span>
+                </div>
+            </div>
+
+            <div class="hint" th:if="${p.entrega != null}">
+                <strong>Entrega:</strong> <span th:text="${p.entrega.enderecoResumido}">Endereço</span>
+            </div>
+            <div class="hint" th:if="${p.pagamento != null}">
+                <strong>Pagamento:</strong>
+                <span th:text="${p.pagamento.metodo.rotulo} + ' · ' + ${p.pagamento.status.rotulo}">Pix · Aprovado</span>
+            </div>
+
+            <div class="order-foot">
+                <strong th:text="'Total: ' + ${#numbers.formatCurrency(p.total)}">Total</strong>
+                <form th:if="${p.cancelavel}" th:action="@{/pedidos/{id}/cancelar(id=${p.id})}" method="post"
+                      data-confirm="Cancelar este pedido? O pagamento será estornado.">
+                    <button class="btn btn-danger btn-sm" type="submit">Cancelar pedido</button>
+                </form>
+                <span class="hint" th:if="${!p.cancelavel and p.status.name() != 'CANCELADO'}">Cancelamento disponível só antes do envio.</span>
+            </div>
+        </div>
+    </article>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

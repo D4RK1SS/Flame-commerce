@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Produto')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('admin')}"></header>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<main class="page container">
+    <div class="admin">
+        <nav th:replace="~{fragments/layout :: adminNav('produtos')}"></nav>
+
+        <section>
+            <div class="toolbar">
+                <h1 th:text="${form.id == null} ? 'Novo produto' : 'Editar produto'">Produto</h1>
+                <a class="btn btn-ghost" th:href="@{/admin/produtos}">← Voltar</a>
+            </div>
+
+            <form class="card panel form" th:action="@{/admin/produtos}" th:object="${form}" method="post" novalidate>
+                <input type="hidden" th:field="*{id}">
+
+                <div class="field" th:classappend="${#fields.hasErrors('nome')} ? 'has-error'">
+                    <label for="nome">Nome</label>
+                    <input id="nome" type="text" th:field="*{nome}" autofocus>
+                    <small class="field-error" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}">erro</small>
+                </div>
+
+                <div class="field" th:classappend="${#fields.hasErrors('descricao')} ? 'has-error'">
+                    <label for="descricao">Descrição</label>
+                    <textarea id="descricao" th:field="*{descricao}"></textarea>
+                    <small class="field-error" th:if="${#fields.hasErrors('descricao')}" th:errors="*{descricao}">erro</small>
+                </div>
+
+                <div class="row">
+                    <div class="field" th:classappend="${#fields.hasErrors('preco')} ? 'has-error'">
+                        <label for="preco">Preço (R$)</label>
+                        <input id="preco" type="number" step="0.01" min="0.01" th:field="*{preco}">
+                        <small class="field-error" th:if="${#fields.hasErrors('preco')}" th:errors="*{preco}">erro</small>
+                    </div>
+                    <div class="field" th:classappend="${#fields.hasErrors('quantidadeEstoque')} ? 'has-error'">
+                        <label for="quantidadeEstoque">Quantidade em estoque</label>
+                        <input id="quantidadeEstoque" type="number" min="0" th:field="*{quantidadeEstoque}">
+                        <small class="field-error" th:if="${#fields.hasErrors('quantidadeEstoque')}" th:errors="*{quantidadeEstoque}">erro</small>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="field" th:classappend="${#fields.hasErrors('categoria')} ? 'has-error'">
+                        <label for="categoria">Categoria</label>
+                        <input id="categoria" type="text" th:field="*{categoria}" placeholder="Ex.: Periféricos">
+                        <small class="field-error" th:if="${#fields.hasErrors('categoria')}" th:errors="*{categoria}">erro</small>
+                    </div>
+                    <div class="field" th:classappend="${#fields.hasErrors('emoji')} ? 'has-error'">
+                        <label for="emoji">Emoji (se não houver imagem)</label>
+                        <input id="emoji" type="text" th:field="*{emoji}" placeholder="🔥">
+                        <small class="field-error" th:if="${#fields.hasErrors('emoji')}" th:errors="*{emoji}">erro</small>
+                    </div>
+                </div>
+
+                <div class="field" th:classappend="${#fields.hasErrors('imagemUrl')} ? 'has-error'">
+                    <label for="imagemUrl">URL da imagem (opcional)</label>
+                    <input id="imagemUrl" type="url" th:field="*{imagemUrl}" placeholder="https://…">
+                    <small class="field-error" th:if="${#fields.hasErrors('imagemUrl')}" th:errors="*{imagemUrl}">erro</small>
+                </div>
+
+                <label class="check">
+                    <input type="checkbox" th:field="*{ativo}">
+                    <span>Produto ativo (aparece na vitrine)</span>
+                </label>
+
+                <div class="buy-row">
+                    <button class="btn btn-primary" type="submit">Salvar produto</button>
+                    <a class="btn btn-ghost" th:href="@{/admin/produtos}">Cancelar</a>
+                </div>
+            </form>
+        </section>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

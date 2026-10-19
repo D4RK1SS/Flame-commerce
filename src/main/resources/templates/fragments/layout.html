@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<!-- Biblioteca de fragmentos reutilizados por todas as telas -->
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title} + ' · Flame Commerce'">Flame Commerce</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sedan+SC&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="icon" type="image/svg+xml" th:href="@{/img/flame.svg}">
+    <script th:src="@{/js/app.js}" defer></script>
+</head>
+
+<body>
+
+<header th:fragment="header(active)" class="site-header">
+    <div class="container header-inner">
+        <a class="brand" th:href="@{/}">
+            <img th:src="@{/img/flame.svg}" alt="">
+            <span>Flame <em>Commerce</em></span>
+        </a>
+
+        <form class="header-search" th:action="@{/}" method="get" role="search">
+            <label class="sr-only" for="q">Buscar produtos</label>
+            <input id="q" type="search" name="q" placeholder="Buscar produtos…" th:value="${busca}">
+        </form>
+
+        <button class="nav-toggle" type="button" data-nav-toggle aria-label="Abrir menu" aria-expanded="false">☰</button>
+
+        <nav class="nav" aria-label="Principal">
+            <a th:href="@{/}" th:classappend="${active == 'loja'} ? 'active'">Loja</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/pedidos}"
+               th:classappend="${active == 'pedidos'} ? 'active'">Meus pedidos</a>
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}">Admin</a>
+            <a sec:authorize="isAuthenticated()" class="cart" th:href="@{/carrinho}"
+               th:classappend="${active == 'carrinho'} ? 'active'">
+                🛒 Carrinho
+                <span class="badge-count" th:if="${cartCount != null and cartCount > 0}" th:text="${cartCount}">0</span>
+            </a>
+
+            <th:block sec:authorize="isAnonymous()">
+                <a th:href="@{/login}">Entrar</a>
+                <a class="btn btn-primary btn-sm" th:href="@{/cadastro}">Criar conta</a>
+            </th:block>
+
+            <th:block sec:authorize="isAuthenticated()">
+                <span class="user-chip" sec:authentication="name">usuario</span>
+                <form th:action="@{/logout}" method="post">
+                    <button class="link" type="submit">Sair</button>
+                </form>
+            </th:block>
+        </nav>
+    </div>
+</header>
+
+<div th:fragment="flash" class="flash-stack" aria-live="polite">
+    <div class="alert alert-success" role="status" th:if="${sucesso}">
+        <span th:text="${sucesso}">Sucesso</span>
+        <button class="close" type="button" aria-label="Fechar">&times;</button>
+    </div>
+    <div class="alert alert-error" role="alert" th:if="${erro}">
+        <span th:text="${erro}">Erro</span>
+        <button class="close" type="button" aria-label="Fechar">&times;</button>
+    </div>
+</div>
+
+<footer th:fragment="footer" class="site-footer">
+    <div class="container footer-inner">
+        <span><strong>Flame Commerce</strong> · “Compre fácil, receba rápido.”</span>
+        <span>Projeto acadêmico · Análise e Projeto de Sistemas</span>
+    </div>
+</footer>
+
+<!-- Foto do produto, ou gradiente quente + emoji quando não há imagem. cls: '' | 'sm' | 'xl' -->
+<div th:fragment="media(p, cls)" class="media" th:classappend="${cls}"
+     th:style="'--hue:' + ${(p.id * 23) % 50 + 5}">
+    <img th:if="${!#strings.isEmpty(p.imagemUrl)}" th:src="${p.imagemUrl}" th:alt="${p.nome}" loading="lazy">
+    <span th:if="${#strings.isEmpty(p.imagemUrl)}" class="emoji" aria-hidden="true"
+          th:text="${#strings.isEmpty(p.emoji) ? '🔥' : p.emoji}">🔥</span>
+    <th:block th:if="${cls == ''}">
+        <span class="tag out" th:if="${!p.disponivel}">Esgotado</span>
+        <span class="tag warn" th:if="${p.disponivel and p.quantidadeEstoque <= 3}">Últimas unidades</span>
+    </th:block>
+</div>
+
+<nav th:fragment="adminNav(active)" class="card admin-nav" aria-label="Administração">
+    <a th:href="@{/admin}" th:classappend="${active == 'painel'} ? 'active'">📊 Painel</a>
+    <a th:href="@{/admin/produtos}" th:classappend="${active == 'produtos'} ? 'active'">📦 Produtos</a>
+    <a th:href="@{/admin/pedidos}" th:classappend="${active == 'pedidos'} ? 'active'">🧾 Pedidos</a>
+    <hr>
+    <a th:href="@{/}">← Voltar à loja</a>
+</nav>
+
+</body>
+</html>

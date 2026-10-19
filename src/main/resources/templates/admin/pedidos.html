@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Pedidos')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('admin')}"></header>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<main class="page container">
+    <div class="admin">
+        <nav th:replace="~{fragments/layout :: adminNav('pedidos')}"></nav>
+
+        <section>
+            <h1>Pedidos recebidos</h1>
+
+            <div class="card table-wrap">
+                <table>
+                    <thead>
+                    <tr><th>Pedido</th><th>Cliente</th><th>Itens</th><th>Entrega</th><th>Total</th><th>Status</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="p : ${pedidos}">
+                        <td>
+                            <strong th:text="'#' + ${p.id}">#1</strong><br>
+                            <span class="hint" th:text="${#temporals.format(p.criadoEm, 'dd/MM/yyyy HH:mm')}">01/01/2026</span>
+                        </td>
+                        <td>
+                            <span th:text="${p.usuario.nome}">Cliente</span><br>
+                            <span class="hint" th:text="${p.usuario.email}">email</span>
+                        </td>
+                        <td>
+                            <div class="hint" th:each="i : ${p.itens}" th:text="${i.quantidade} + '× ' + ${i.nomeProduto}">1× Produto</div>
+                        </td>
+                        <td class="hint" th:text="${p.entrega != null} ? ${p.entrega.cidade} + '/' + ${p.entrega.estado} : '—'">Cidade/UF</td>
+                        <td th:text="${#numbers.formatCurrency(p.total)}">R$ 0,00</td>
+                        <td><span class="status" th:classappend="'status-' + ${p.status.name()}" th:text="${p.status.rotulo}">Status</span></td>
+                        <td class="actions">
+                            <form th:if="${p.podeAvancar}" th:action="@{/admin/pedidos/{id}/avancar(id=${p.id})}" method="post">
+                                <button class="btn btn-outline btn-sm" type="submit"
+                                        th:text="${p.status.name() == 'CONFIRMADO'} ? 'Marcar como enviado' : 'Marcar como entregue'">Avançar</button>
+                            </form>
+                            <form th:if="${p.cancelavel}" th:action="@{/admin/pedidos/{id}/cancelar(id=${p.id})}" method="post"
+                                  data-confirm="Cancelar este pedido? O estoque será reposto.">
+                                <button class="btn btn-danger btn-sm" type="submit">Cancelar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(pedidos)}">
+                        <td colspan="7" class="muted" style="text-align:center">Nenhum pedido recebido ainda.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
