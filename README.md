@@ -1,8 +1,6 @@
 # 🔥 Flame Commerce
 
-E-commerce simples em **Java 17 + Spring Boot 3** (projeto da disciplina Análise e Projeto de Sistemas).
-Baseado no quadro do Trello "Analise e projeto de sistemas": requisitos, regras de negócio RN1–RN5,
-diagrama ER, classes, sequência e atividades.
+E-commerce simples em **Java 17 + Spring Boot 3**
 
 ## Como rodar
 
