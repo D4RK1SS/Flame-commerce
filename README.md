@@ -31,6 +31,37 @@ Este repositório é a **implementação** desse material. O objetivo foi simple
 A prioridade foi o **frontend e a usabilidade**: interface responsiva, feedback claro em cada ação
 e um tema visual próprio, derivado da paleta de outro projeto da equipe (Alexandria).
 
+## Como foi feito: IA conectada ao Trello
+
+O projeto foi construído com o **Claude** conectado ao quadro do Trello (conector MCP), em vez de copiar e colar
+a documentação. A IA leu os 22 cartões do quadro e os usou como fonte da verdade.
+
+**O fluxo**
+
+1. **Ler o quadro:** extrair regras de negócio, requisitos, backlog e o diagrama ER.
+2. **Gerar o projeto** a partir de um prompt estruturado (abaixo).
+3. **Rodar e devolver o erro:** executei o app localmente e colei o log de volta; a IA achou a causa de um
+   `LazyInitializationException` e corrigiu.
+4. **Escrever de volta no Trello:** os diagramas de sequência e colaboração foram registrados nos cartões.
+
+**A estrutura do prompt**
+
+| Elemento | O que eu pedi |
+|----------|---------------|
+| Objetivo e fonte da verdade | Analisar o quadro e criar a plataforma com base em toda a documentação |
+| Restrições técnicas | Java + Spring Boot, padrões MVC e Repository, boas práticas |
+| Escopo mínimo | Telas de cadastro, loja, login e admin |
+| Prioridade | Frontend e usabilidade |
+| Referência visual | HTML e CSS de outro projeto, para herdar a paleta |
+
+**Aprendizados**
+
+- **Contexto completo vence.** Enviei primeiro só o HTML do front de referência, mas as cores estavam no CSS.
+  O tema só ficou fiel depois do arquivo completo.
+- **A IA não substitui a validação.** Ela não conseguiu compilar no ambiente dela; quem fechou o ciclo foi a
+  execução local, e o log de erro virou o próximo prompt.
+- **Peça para listar o que não foi validado.** Deixa claro o que ainda precisa de revisão humana.
+
 ## O que dá para fazer
 
 **Cliente**
